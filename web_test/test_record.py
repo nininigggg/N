@@ -1,6 +1,4 @@
-import time
 
-from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from web_test.log_utils import logger
 from web_test.base import Base
