@@ -18,3 +18,15 @@ def test_header():
     print(r.json())
     assert r.status_code == 200
     assert r.json()['headers']['H'] == "header demo"
+
+
+def test_post_json():
+    payload = {
+        "level": 1,
+        "name": "seveniruby"
+    }
+    r = requests.post("https://httpbin.org/post", json=payload)
+    print(r.text)
+    assert r.status_code == 200
+    assert r.json().['json']['level'] == 1
+
