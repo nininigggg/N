@@ -28,5 +28,5 @@ def test_post_json():
     r = requests.post("https://httpbin.org/post", json=payload)
     print(r.text)
     assert r.status_code == 200
-    assert r.json().['json']['level'] == 1
+    assert r.json()['json']['level'] == 1
 

@@ -24,10 +24,12 @@ class TestRecord(Base):
         # time.sleep(10)
         self.driver.maximize_window()
         time.sleep(1)
+
+    def test_new_type(self):
         self.driver.find_element(By.XPATH, "//*[text()='商场管理']").click()
         self.driver.find_element(By.XPATH, "//*[text()='商品类目']").click()
         self.driver.find_element(By.XPATH, "//*[text()='添加']").click()
-        self.driver.find_element(By.CSS_SELECTOR, '.el-input__inner').send_keys("新增商品测试")
+        self.driver.find_element(By.CSS_SELECTOR, '.el-input__inner').send_keys("新增商品测试1")
         # 方法一：强制等待
         # button =self.driver.find_element(By.CSS_SELECTOR, '.dialog-footer .el-button--primary')
         # time.sleep(3)
@@ -45,5 +47,21 @@ class TestRecord(Base):
         ActionChains(self.driver).move_to_element(element).click(element).perform()
 
         time.sleep(1)
-        res = self.driver.find_element(By.XPATH, "//*[text()='新增商品测试']")
+        res = self.driver.find_element(By.XPATH, "//*[text()='新增商品测试1']")
         assert res != []
+
+    def test_delete_type(self):
+        self.driver.find_element(By.XPATH, "//*[text()='商场管理']").click()
+        self.driver.find_element(By.XPATH, "//*[text()='商品类目']").click()
+        self.driver.find_element(By.XPATH, "//*[text()='添加']").click()
+        self.driver.find_element(By.CSS_SELECTOR, '.el-input__inner').send_keys("删除商品测试")
+        ele = WebDriverWait(self.driver, 10).until(
+            expected_conditions.element_to_be_clickable(
+                (By.CSS_SELECTOR, '.dialog-footer .el-button--primary')))
+        ele.click()
+        self.driver.find_element(By.XPATH, "//*[text()='删除商品测试']").click()
+        ele = WebDriverWait(self.driver, 10).until(
+            expected_conditions.visibility_of_element_located(
+                (By.XPATH, "//*[text()='删除商品测试']")))
+        res = self.driver.find_element(By.XPATH, "//*[text()='删除商品测试']")
+        assert res == []
