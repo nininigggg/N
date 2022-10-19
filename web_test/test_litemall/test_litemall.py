@@ -25,8 +25,24 @@ class TestRecord(Base):
         self.driver.maximize_window()
         time.sleep(1)
 
+    def get_screen(self):
+        timestamp = int(time.time())
+        image_path = f"./images/image_{timestamp}.PNG"
+        self.driver.save_screenshot(image_path)
+        # 将截图放到报告中
+        # allure.attach.file(image_path, name="picture",
+        #                    attachment_type=allure.attachment_type.PNG)
+
     def test_new_type(self):
         self.driver.get("http://litemall.hogwarts.ceshiren.com/")
+        self.driver.find_element(By.NAME, "username").clear()
+        self.driver.find_element(By.NAME, "username").send_keys("manage")
+        self.driver.find_element(By.NAME, "password").clear()
+        self.driver.find_element(By.NAME, "password").send_keys("manage123")
+        self.driver.find_element(By.CSS_SELECTOR, ".el-button--primary").click()
+        # time.sleep(10)
+        self.driver.maximize_window()
+        time.sleep(1)
         self.driver.find_element(By.XPATH, "//*[text()='商场管理']").click()
         self.driver.find_element(By.XPATH, "//*[text()='商品类目']").click()
         self.driver.find_element(By.XPATH, "//*[text()='添加']").click()
@@ -47,8 +63,11 @@ class TestRecord(Base):
         element = self.driver.find_element(By.CSS_SELECTOR, '.dialog-footer .el-button--primary')
         ActionChains(self.driver).move_to_element(element).click(element).perform()
 
-        time.sleep(1)
+        # time.sleep(1)
         res = self.driver.find_element(By.XPATH, "//*[text()='新增商品测试1']")
+        self.get_screen()
+        self.driver.find_element(By.XPATH, "//*[text()='新增商品测试1']/../..//*[text()='删除']").click()
+        logger.info(f"断言获取到的实际结果为{res}")
         assert res != []
 
     def test_delete_type(self):
@@ -86,11 +105,13 @@ class TestRecord(Base):
             return _inner
 
         WebDriverWait(self.driver, 10).until(click_exception(By.CSS_SELECTOR, '.dialog-footer .el-button--primary'))
-
-        self.driver.find_element(By.XPATH, "//*[text()='删除商品测试']").click()
-        ele = WebDriverWait(self.driver, 10).until(
-            expected_conditions.visibility_of_element_located(
-                (By.XPATH, "//*[text()='删除商品测试']")))
+        time.sleep(1)
         res = self.driver.find_element(By.XPATH, "//*[text()='删除商品测试']")
-        time.sleep(5)
+        assert res != []
+        # self.driver.find_element(By.XPATH, "//*[text()='删除商品测试']").click()
+        # ele = WebDriverWait(self.driver, 10).until(
+        #     expected_conditions.visibility_of_element_located(
+        #         (By.XPATH, "//*[text()='删除商品测试']")))
+        # res = self.driver.find_element(By.XPATH, "//*[text()='删除商品测试']")
+        # time.sleep(5)
         # assert res == []
