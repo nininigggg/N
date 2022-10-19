@@ -26,6 +26,7 @@ class TestRecord(Base):
         time.sleep(1)
 
     def test_new_type(self):
+        self.driver.get("http://litemall.hogwarts.ceshiren.com/")
         self.driver.find_element(By.XPATH, "//*[text()='商场管理']").click()
         self.driver.find_element(By.XPATH, "//*[text()='商品类目']").click()
         self.driver.find_element(By.XPATH, "//*[text()='添加']").click()
@@ -51,17 +52,45 @@ class TestRecord(Base):
         assert res != []
 
     def test_delete_type(self):
+        self.driver.get("http://litemall.hogwarts.ceshiren.com/")
+        self.driver.find_element(By.NAME, "username").clear()
+        self.driver.find_element(By.NAME, "username").send_keys("manage")
+        self.driver.find_element(By.NAME, "password").clear()
+        self.driver.find_element(By.NAME, "password").send_keys("manage123")
+        self.driver.find_element(By.CSS_SELECTOR, ".el-button--primary").click()
+        # time.sleep(10)
+        self.driver.maximize_window()
+        time.sleep(1)
         self.driver.find_element(By.XPATH, "//*[text()='商场管理']").click()
         self.driver.find_element(By.XPATH, "//*[text()='商品类目']").click()
         self.driver.find_element(By.XPATH, "//*[text()='添加']").click()
         self.driver.find_element(By.CSS_SELECTOR, '.el-input__inner').send_keys("删除商品测试")
-        ele = WebDriverWait(self.driver, 10).until(
-            expected_conditions.element_to_be_clickable(
-                (By.CSS_SELECTOR, '.dialog-footer .el-button--primary')))
-        ele.click()
+        # ele = WebDriverWait(self.driver, 10).until(
+        #     expected_conditions.element_to_be_clickable(
+        #         (By.CSS_SELECTOR, '.dialog-footer .el-button--primary')))
+        # ele.click()
+
+        # 显示等待优化========自定义
+        def click_exception(by, element, max_attempts=5):
+            def _inner(driver):
+                ac_attempts = 0
+                while ac_attempts < max_attempts:
+                    ac_attempts += 1
+                    try:
+                        driver.find_element(by, element).click()
+                        return True
+                    except Exception:
+                        print("点击动作出错")
+                raise Exception("超出最大点击次数")
+            # return _inner() 错误写法，应返回对象而非方法
+            return _inner
+
+        WebDriverWait(self.driver, 10).until(click_exception(By.CSS_SELECTOR, '.dialog-footer .el-button--primary'))
+
         self.driver.find_element(By.XPATH, "//*[text()='删除商品测试']").click()
         ele = WebDriverWait(self.driver, 10).until(
             expected_conditions.visibility_of_element_located(
                 (By.XPATH, "//*[text()='删除商品测试']")))
         res = self.driver.find_element(By.XPATH, "//*[text()='删除商品测试']")
-        assert res == []
+        time.sleep(5)
+        # assert res == []
