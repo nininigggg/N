@@ -1,0 +1,4 @@
+[32mINFO    [0m simple_example:home_page.py:13 系统首页：进入商品类目
+[32mINFO    [0m simple_example:category_list_page.py:19 类目列表页面：点击添加
+[32mINFO    [0m simple_example:category_creat_page.py:15 创建类目页面：创建类目
+[32mINFO    [0m simple_example:category_list_page.py:32 冒泡消息是：创建成功
